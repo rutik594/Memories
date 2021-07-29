@@ -1,0 +1,31 @@
+1.useRef-It gives direct access to dom.It comes into picture mainly with forms.
+ const focusPoint = useRef(null);
+  const clear = () => {
+    focusPoint.current.value = "The quick brown fox jumps over the lazy dog";
+    focusPoint.current.focus();
+    console.log(focusPoint)
+  };
+   <textarea ref={focusPoint} />
+  <Button
+            variant="contained"
+            color="secondary"
+            size="small"
+            onClick={clear}
+            fullWidth
+            useRef={focusPoint}
+          >
+            Clear
+          </Button>
+2.classic example of replacing object values:
+const details={
+name:'rutik',
+roll:1
+}
+const details1={...details,
+name:'ketan',
+roll:2
+}
+console.log(details1)
+3.moment.js-it is a package which gives the time of element in past like the post was posted 5 mins ago.
+4.frontend link-https://happy-clarke-d3cb63.netlify.app/
+   backend link-https://memories-poject.herokuapp.com/api/posts
