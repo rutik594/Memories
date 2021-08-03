@@ -1,18 +1,32 @@
 import axios from "axios";
-const url = "https://memories-poject.herokuapp.com/api/posts";
+/*const url = "https://memories-poject.herokuapp.com/api/posts"*/const API = axios.create({ baseURL: 'http://localhost:3001/' });;
+
+
+API.interceptors.request.use((req) => {
+  if (localStorage.getItem("profile")) {
+    req.headers.Authorization = `Bearer ${
+      JSON.parse(localStorage.getItem("profile")).token
+    }`;
+  }
+
+  return req;
+});
 export const fetchPosts = () => (
-  axios.get(url)
+  API.get('/api/posts')
 )
 export const createPosts = (newPost) => (
-  axios.post(url, newPost)
+  API.post('/api/posts', newPost)
   
 )
 
 export const updatePost = (currentId, updatedPost) => {
-  axios.patch(`${url}/update/${currentId}`, updatedPost);
+  API.patch(`/api/posts/update/${currentId}`, updatedPost);
 }
 export const deletePost = (currentId) => {
-  axios.delete(`${url}/deletes/${currentId}`);
+  API.delete(`/api/posts/deletes/${currentId}`);
 };
 export const likePost = (currentId) => 
-  axios.patch(`${url}/like/${currentId}`);
+  API.patch(`/api/posts/like/${currentId}`);
+
+export const signIn = (formData) => API.post("/user/signin", formData);
+export const signUp = (formData) => API.post("/user/signup", formData);

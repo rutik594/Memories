@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const postRoute = require("./routes/posts");
+const userRoute = require("./routes/users");
 const dotenv = require('dotenv')
 const PORT=process.env.PORT || 3001
 //for handling post request by word handling i meant to say to unpack the body in which our data is there
@@ -33,10 +34,11 @@ try {
 } catch (err) {
   console.log(err.message);
 }
-app.get('/', (req, res) => {
+/*app.get('/', (req, res) => {
   res.send('hello')
-})
+})*/
 app.use("/api", postRoute);
+app.use("/user", userRoute);
 app.listen(PORT , () => {
   console.log("server up and running");
 });

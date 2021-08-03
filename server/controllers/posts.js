@@ -2,24 +2,21 @@ const PostMessage = require("../Models/postMessage");
 const mongoose = require("mongoose");
 //creating posts
 const createPosts = async (req, res) => {
-  const { title, message, selectedFile, creator, tags } = req.body;
-  console.log(req.body);
-  console.log(req.body.message);
-  const newPostMessage = new PostMessage({
-    title,
-    message,
-    selectedFile,
-    creator,
-    tags,
-  });
+   const post = req.body;
 
-  try {
-    await newPostMessage.save();
+   const newPostMessage = new PostMessage({
+     ...post,
+     creator: req.userId,
+     createdAt: new Date().toISOString(),
+   });
 
-    res.status(201).json(newPostMessage);
-  } catch (error) {
-    res.status(409).json({ message: error.message });
-  }
+   try {
+     await newPostMessage.save();
+
+     res.status(201).json(newPostMessage);
+   } catch (error) {
+     res.status(409).json({ message: error.message });
+   }
 };
 //getting all posts
 const getPosts = async (req, res) => {
@@ -70,19 +67,24 @@ const deletePost = async (req, res) => {
 };
 const likePost = async (req, res) => {
   const { id } = req.params;
-console.l
-  if (!mongoose.Types.ObjectId.isValid(id))
-    return res.status(404).send(`No post with id: ${id}`);
 
-  const post = await PostMessage.findById(id);
-console.log(post)
-  const updatedPost = await PostMessage.findByIdAndUpdate(
-    id,
-    { likeCount: post.likeCount + 1 },
-    { new: true }
-  );
+    if (!req.userId) {
+        return res.json({ message: "Unauthenticated" });
+      }
 
-  res.json(updatedPost);
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+    
+    const post = await PostMessage.findById(id);
+
+    const index = post.likes.findIndex((id) => id ===String(req.userId));
+
+    if (index === -1) {
+      post.likes.push(req.userId);
+    } else {
+      post.likes = post.likes.filter((id) => id !== String(req.userId));
+    }
+    const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });
+    res.status(200).json(updatedPost);
 };
 
 module.exports = { getPosts, createPosts, updatePost,deletePost,likePost };
